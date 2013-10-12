@@ -47,9 +47,10 @@ public class TextRenderer implements StandardRenderer {
 	public void renderRoundHeader(Engine engine) {
 		Coordinate currentCoord = engine.getCurrentCoordinate();
 		Coordinate maxCoord = engine.getMaximumCoordinate();
-		System.out.format("CUR (%d, %d, %d) MAX (%d, %d, %d)\n\n",
+		System.out.format("CUR (%d, %d, %d) MAX (%d, %d, %d) =[%d]=\n\n",
 				currentCoord.getZ(), currentCoord.getX(), currentCoord.getY(),
-				maxCoord.getZ(), maxCoord.getX(), maxCoord.getY());
+				maxCoord.getZ(), maxCoord.getX(), maxCoord.getY(),
+				currentCoord.getZ());
 	}
 
 	public void renderRoundTiles(Engine engine) {
@@ -60,6 +61,7 @@ public class TextRenderer implements StandardRenderer {
 		for (int i = 0; i <= maxCoord.getY(); i++) {
 			this.outputColumn(String.valueOf(i));
 		}
+		System.out.println();
 		System.out.println();
 
 		// The rest part.
@@ -76,8 +78,8 @@ public class TextRenderer implements StandardRenderer {
 				this.outputColumn(str);
 			}
 			System.out.println();
+			System.out.println();
 		}
-		System.out.println();
 	}
 
 	public void renderRoundAttributes(Engine engine) {
