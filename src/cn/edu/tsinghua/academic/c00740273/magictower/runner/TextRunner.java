@@ -85,6 +85,13 @@ public class TextRunner {
 				scanner.nextLine();
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.simulateMoveTo(coord, null);
+			} else if (cmd.equals("a")) {
+				int z = scanner.nextInt();
+				int x = scanner.nextInt();
+				int y = scanner.nextInt();
+				scanner.nextLine();
+				Coordinate coord = new Coordinate(z, x, y);
+				return engine.attemptMoveTo(coord, null);
 			} else if (cmd.equals("h")) {
 				scanner.nextLine();
 				Coordinate currentCoord = engine.getCurrentCoordinate();

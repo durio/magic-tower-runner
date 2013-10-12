@@ -1,6 +1,7 @@
 package cn.edu.tsinghua.academic.c00740273.magictower.runner;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -80,13 +81,7 @@ public class TextRenderer implements StandardRenderer {
 	}
 
 	public void renderRoundAttributes(Engine engine) {
-		for (Map.Entry<String, Object> attributeEntry : engine.getAttributes()
-				.entrySet()) {
-			System.out.format("%s: %s;\t", attributeEntry.getKey(),
-					attributeEntry.getValue());
-		}
-		System.out.println();
-		System.out.println();
+		this.outputStringObjectMap(engine.getAttributes());
 	}
 
 	public void outputColumn(String str) {
@@ -111,6 +106,16 @@ public class TextRenderer implements StandardRenderer {
 		}
 	}
 
+	public void outputStringObjectMap(Map<String, Object> map) {
+		for (Map.Entry<String, Object> attributeEntry : map.entrySet()) {
+			System.out.format("%s: %s;\t", attributeEntry.getKey(),
+					attributeEntry.getValue());
+		}
+		System.out.println();
+		System.out.println();
+	}
+
+	@SuppressWarnings("unchecked")
 	public void renderEvent(StandardEvent event) {
 		if (event != null) {
 			System.out.println("OK.");
@@ -118,6 +123,14 @@ public class TextRenderer implements StandardRenderer {
 			System.out.println("REJECTED.");
 		}
 		System.out.println();
+		if (event != null
+				&& event.getExtraInformation().containsKey("fight-details")) {
+			System.out.println("Fight details:");
+			for (Object fightDetails : (List<Object>) event
+					.getExtraInformation().get("fight-details")) {
+				System.out.print("* ");
+				this.outputStringObjectMap((Map<String, Object>) fightDetails);
+			}
+		}
 	}
-
 }
