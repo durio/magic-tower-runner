@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.Coordinate;
@@ -19,12 +21,16 @@ import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardGame;
 public class TextRunner {
 
 	protected String data;
+	protected Map<String, byte[]> storage;
 
 	public TextRunner(String data) {
 		this.data = data;
+		this.storage = new HashMap<String, byte[]>();
 	}
 
-	public static void main(String[] args) throws IOException, DataException {
+	public static void main(String[] args) throws IOException, DataException,
+			InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
 		if (args.length < 1) {
 			System.err.println("Usage: java TextRunner data_file");
 			System.exit(1);
@@ -52,7 +58,9 @@ public class TextRunner {
 		}
 	}
 
-	public void run() throws DataException, GameTerminationException {
+	public void run() throws DataException, GameTerminationException,
+			IOException, InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
 		Engine engine = new Engine();
 		StandardGame game = new StandardGame(this.data);
 		TextRenderer renderer = (TextRenderer) game.getRenderer();
@@ -66,7 +74,9 @@ public class TextRunner {
 
 	@SuppressWarnings("resource")
 	public Event runCommand(Engine engine, TextRenderer renderer)
-			throws GameTerminationException {
+			throws GameTerminationException, IOException,
+			InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
 		while (true) {
 			System.out.print("> ");
 			Scanner scanner = new Scanner(System.in);
@@ -124,6 +134,22 @@ public class TextRunner {
 				int y = currentCoord.getY();
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.moveTo(coord, null);
+			} else if (cmd.equals("w")) {
+				String storageKey = scanner.next();
+				scanner.nextLine();
+				byte[] data = engine.serializeGame();
+				this.storage.put(storageKey, data);
+				System.out.println("Saved as " + storageKey + ".");
+			} else if (cmd.equals("r")) {
+				String storageKey = scanner.next();
+				scanner.nextLine();
+				byte[] data = this.storage.get(storageKey);
+				if (data == null) {
+					System.out.println(storageKey + " not found in storage.");
+				} else {
+					engine.unserializeGame(data);
+					return new StandardEvent(engine.getCurrentCoordinate());
+				}
 			} else {
 				System.out.println("Invalid command.");
 			}
