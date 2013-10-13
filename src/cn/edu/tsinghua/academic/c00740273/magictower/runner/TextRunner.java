@@ -47,19 +47,11 @@ public class TextRunner {
 		String data = dataBuilder.toString();
 
 		TextRunner textRunner = new TextRunner(data);
-		try {
-			textRunner.run();
-		} catch (GameSuccessTerminationException e) {
-			System.out.println("Success!");
-		} catch (GameFailureTerminationException e) {
-			System.out.println("Failed.");
-		} catch (GameTerminationException e) {
-			e.printStackTrace();
-		}
+		textRunner.run();
 	}
 
-	public void run() throws DataException, GameTerminationException,
-			IOException, InstantiationException, IllegalAccessException,
+	public void run() throws DataException, IOException,
+			InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
 		Engine engine = new Engine();
 		StandardGame game = new StandardGame(this.data);
@@ -68,7 +60,20 @@ public class TextRunner {
 
 		while (true) {
 			renderer.renderRoundEvent(engine, event);
-			event = (StandardEvent) this.runCommand(engine, renderer);
+			try {
+				event = (StandardEvent) this.runCommand(engine, renderer);
+			} catch (GameSuccessTerminationException e) {
+				System.out.print("Success! " + e.getMessage() + " / ");
+				renderer.renderEvent((StandardEvent) e.getEvent());
+				return;
+			} catch (GameFailureTerminationException e) {
+				System.out.print("Failed. " + e.getMessage() + " / ");
+				renderer.renderEvent((StandardEvent) e.getEvent());
+				return;
+			} catch (GameTerminationException e) {
+				e.printStackTrace();
+				return;
+			}
 		}
 	}
 
