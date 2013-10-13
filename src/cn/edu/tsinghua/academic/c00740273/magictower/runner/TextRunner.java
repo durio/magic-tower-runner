@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.json.JSONException;
+import org.json.JSONTokener;
+
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.Coordinate;
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.DataException;
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.Engine;
@@ -30,7 +33,7 @@ public class TextRunner {
 
 	public static void main(String[] args) throws IOException, DataException,
 			InstantiationException, IllegalAccessException,
-			ClassNotFoundException {
+			ClassNotFoundException, JSONException {
 		if (args.length < 1) {
 			System.err.println("Usage: java TextRunner data_file");
 			System.exit(1);
@@ -52,7 +55,7 @@ public class TextRunner {
 
 	public void run() throws DataException, IOException,
 			InstantiationException, IllegalAccessException,
-			ClassNotFoundException {
+			ClassNotFoundException, JSONException {
 		Engine engine = new Engine();
 		StandardGame game = new StandardGame(this.data);
 		TextRenderer renderer = (TextRenderer) game.getRenderer();
@@ -81,7 +84,7 @@ public class TextRunner {
 	public Event runCommand(Engine engine, TextRenderer renderer)
 			throws GameTerminationException, IOException,
 			InstantiationException, IllegalAccessException,
-			ClassNotFoundException {
+			ClassNotFoundException, JSONException {
 		while (true) {
 			System.out.print("> ");
 			Scanner scanner = new Scanner(System.in);
@@ -187,6 +190,13 @@ public class TextRunner {
 					}
 					System.out.println("Termination mode set.");
 				}
+			} else if (cmd.equals("v")) {
+				String attributeKey = scanner.next();
+				String attributeValueStr = scanner.next();
+				JSONTokener tokener = new JSONTokener(attributeValueStr);
+				Object attributeValue = tokener.nextValue();
+				engine.setAttribute(attributeKey, attributeValue);
+				return new StandardEvent(engine.getCurrentCoordinate());
 			} else {
 				System.out.println("Invalid command.");
 			}
