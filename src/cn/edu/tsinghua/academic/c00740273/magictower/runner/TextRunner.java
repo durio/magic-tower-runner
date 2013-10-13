@@ -144,7 +144,8 @@ public class TextRunner {
 				scanner.nextLine();
 				byte[] data = engine.serializeGame();
 				this.storage.put(storageKey, data);
-				System.out.println("Saved as " + storageKey + ".");
+				System.out.println(data.length + " bytes saved as "
+						+ storageKey + ".");
 			} else if (cmd.equals("r")) {
 				String storageKey = scanner.next();
 				scanner.nextLine();
