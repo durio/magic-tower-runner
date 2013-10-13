@@ -155,6 +155,37 @@ public class TextRunner {
 					engine.unserializeGame(data);
 					return new StandardEvent(engine.getCurrentCoordinate());
 				}
+			} else if (cmd.equals("t")) {
+				String terminationStr = scanner.next();
+				Engine.Termination termination = null;
+				if (terminationStr.equals("a")) {
+					termination = Engine.Termination.AUTOMATIC;
+				} else if (terminationStr.equals("m")) {
+					termination = Engine.Termination.MANUAL;
+				} else if (terminationStr.equals("n")) {
+					termination = Engine.Termination.NEVER;
+				} else {
+					System.out.println("Invalid termination mode.");
+					scanner.nextLine();
+				}
+				if (termination != null) {
+					String targetStr = scanner.next();
+					scanner.nextLine();
+					for (char target : targetStr.toCharArray()) {
+						switch (target) {
+						case 's':
+							engine.setSuccessTermination(termination);
+							break;
+						case 'f':
+							engine.setFailureTermination(termination);
+							break;
+						default:
+							System.out.println("Invalid target: " + target);
+							break;
+						}
+					}
+					System.out.println("Termination mode set.");
+				}
 			} else {
 				System.out.println("Invalid command.");
 			}
