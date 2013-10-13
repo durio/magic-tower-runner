@@ -25,10 +25,12 @@ public class TextRunner {
 
 	protected String data;
 	protected Map<String, byte[]> storage;
+	protected Scanner scanner;
 
 	public TextRunner(String data) {
 		this.data = data;
 		this.storage = new HashMap<String, byte[]>();
+		this.scanner = new Scanner(System.in);
 	}
 
 	public static void main(String[] args) throws IOException, DataException,
@@ -80,38 +82,32 @@ public class TextRunner {
 		}
 	}
 
-	@SuppressWarnings("resource")
 	public Event runCommand(Engine engine, TextRenderer renderer)
 			throws GameTerminationException, IOException,
 			InstantiationException, IllegalAccessException,
 			ClassNotFoundException, JSONException {
 		while (true) {
 			System.out.print("> ");
-			Scanner scanner = new Scanner(System.in);
-			String cmd = scanner.next();
+			String cmd = this.scanner.next();
 			if (cmd.equals("m")) {
-				int z = scanner.nextInt();
-				int x = scanner.nextInt();
-				int y = scanner.nextInt();
-				scanner.nextLine();
+				int z = this.scanner.nextInt();
+				int x = this.scanner.nextInt();
+				int y = this.scanner.nextInt();
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.moveTo(coord, null);
 			} else if (cmd.equals("s")) {
-				int z = scanner.nextInt();
-				int x = scanner.nextInt();
-				int y = scanner.nextInt();
-				scanner.nextLine();
+				int z = this.scanner.nextInt();
+				int x = this.scanner.nextInt();
+				int y = this.scanner.nextInt();
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.simulateMoveTo(coord, null);
 			} else if (cmd.equals("a")) {
-				int z = scanner.nextInt();
-				int x = scanner.nextInt();
-				int y = scanner.nextInt();
-				scanner.nextLine();
+				int z = this.scanner.nextInt();
+				int x = this.scanner.nextInt();
+				int y = this.scanner.nextInt();
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.attemptMoveTo(coord, null);
 			} else if (cmd.equals("h")) {
-				scanner.nextLine();
 				Coordinate currentCoord = engine.getCurrentCoordinate();
 				int z = currentCoord.getZ();
 				int x = currentCoord.getX();
@@ -119,7 +115,6 @@ public class TextRunner {
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.moveTo(coord, null);
 			} else if (cmd.equals("l")) {
-				scanner.nextLine();
 				Coordinate currentCoord = engine.getCurrentCoordinate();
 				int z = currentCoord.getZ();
 				int x = currentCoord.getX();
@@ -127,7 +122,6 @@ public class TextRunner {
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.moveTo(coord, null);
 			} else if (cmd.equals("j")) {
-				scanner.nextLine();
 				Coordinate currentCoord = engine.getCurrentCoordinate();
 				int z = currentCoord.getZ();
 				int x = currentCoord.getX() + 1;
@@ -135,7 +129,6 @@ public class TextRunner {
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.moveTo(coord, null);
 			} else if (cmd.equals("k")) {
-				scanner.nextLine();
 				Coordinate currentCoord = engine.getCurrentCoordinate();
 				int z = currentCoord.getZ();
 				int x = currentCoord.getX() - 1;
@@ -143,15 +136,13 @@ public class TextRunner {
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.moveTo(coord, null);
 			} else if (cmd.equals("w")) {
-				String storageKey = scanner.next();
-				scanner.nextLine();
+				String storageKey = this.scanner.next();
 				byte[] data = engine.serializeGame();
 				this.storage.put(storageKey, data);
 				System.out.println(data.length + " bytes saved as "
 						+ storageKey + ".");
 			} else if (cmd.equals("r")) {
-				String storageKey = scanner.next();
-				scanner.nextLine();
+				String storageKey = this.scanner.next();
 				byte[] data = this.storage.get(storageKey);
 				if (data == null) {
 					System.out.println(storageKey + " not found in storage.");
@@ -160,7 +151,7 @@ public class TextRunner {
 					return new StandardEvent(engine.getCurrentCoordinate());
 				}
 			} else if (cmd.equals("t")) {
-				String terminationStr = scanner.next();
+				String terminationStr = this.scanner.next();
 				Engine.Termination termination = null;
 				if (terminationStr.equals("a")) {
 					termination = Engine.Termination.AUTOMATIC;
@@ -170,11 +161,9 @@ public class TextRunner {
 					termination = Engine.Termination.NEVER;
 				} else {
 					System.out.println("Invalid termination mode.");
-					scanner.nextLine();
 				}
 				if (termination != null) {
-					String targetStr = scanner.next();
-					scanner.nextLine();
+					String targetStr = this.scanner.next();
 					for (char target : targetStr.toCharArray()) {
 						switch (target) {
 						case 's':
@@ -191,8 +180,8 @@ public class TextRunner {
 					System.out.println("Termination mode set.");
 				}
 			} else if (cmd.equals("v")) {
-				String attributeKey = scanner.next();
-				String attributeValueStr = scanner.next();
+				String attributeKey = this.scanner.next();
+				String attributeValueStr = this.scanner.next();
 				JSONTokener tokener = new JSONTokener(attributeValueStr);
 				Object attributeValue = tokener.nextValue();
 				engine.setAttribute(attributeKey, attributeValue);
