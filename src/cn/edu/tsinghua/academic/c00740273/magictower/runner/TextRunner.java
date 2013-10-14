@@ -186,6 +186,8 @@ public class TextRunner {
 				Object attributeValue = tokener.nextValue();
 				engine.setAttribute(attributeKey, attributeValue);
 				return new StandardEvent(engine.getCurrentCoordinate());
+			} else if (cmd.equals("z")) {
+				return new StandardEvent(engine.getCurrentCoordinate());
 			} else {
 				System.out.println("Invalid command.");
 			}

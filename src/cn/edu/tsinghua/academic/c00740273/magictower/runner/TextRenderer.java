@@ -1,6 +1,5 @@
 package cn.edu.tsinghua.academic.c00740273.magictower.runner;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,12 +27,7 @@ public class TextRenderer implements StandardRenderer {
 	}
 
 	public void renderRoundEvent(Engine engine, StandardEvent event) {
-		if (System.getProperty("os.name").equals("Linux")) {
-			try {
-				Runtime.getRuntime().exec("clear");
-			} catch (IOException e) {
-			}
-		}
+		System.out.println("\u001b[2J\u001b[H");
 		this.renderRound(engine);
 		this.renderEvent(event);
 	}
