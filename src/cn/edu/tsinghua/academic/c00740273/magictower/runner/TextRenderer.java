@@ -1,5 +1,7 @@
 package cn.edu.tsinghua.academic.c00740273.magictower.runner;
 
+import java.io.Console;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,19 @@ public class TextRenderer implements StandardRenderer {
 
 	protected int columnWidth;
 	protected String characterText;
+	protected boolean isConsole;
+	protected PrintWriter writer;
+
+	public TextRenderer() {
+		Console console = System.console();
+		if (console != null) {
+			this.writer = console.writer();
+			this.isConsole = true;
+		} else {
+			this.writer = new PrintWriter(System.out, true);
+			this.isConsole = false;
+		}
+	}
 
 	@Override
 	public void initialize(JSONObject dataValue) throws JSONException,
@@ -27,7 +42,9 @@ public class TextRenderer implements StandardRenderer {
 	}
 
 	public void renderRoundEvent(Engine engine, StandardEvent event) {
-		System.out.println("\u001b[2J\u001b[H");
+		if (this.isConsole) {
+			this.writer.println("\u001b[2J\u001b[H");
+		}
 		this.renderRound(engine);
 		this.renderEvent(event);
 	}
@@ -41,7 +58,7 @@ public class TextRenderer implements StandardRenderer {
 	public void renderRoundHeader(Engine engine) {
 		Coordinate currentCoord = engine.getCurrentCoordinate();
 		Coordinate maxCoord = engine.getMaximumCoordinate();
-		System.out.format("CUR (%d, %d, %d) MAX (%d, %d, %d) =[%d]=\n\n",
+		this.writer.format("CUR (%d, %d, %d) MAX (%d, %d, %d) =[%d]=\n\n",
 				currentCoord.getZ(), currentCoord.getX(), currentCoord.getY(),
 				maxCoord.getZ(), maxCoord.getX(), maxCoord.getY(),
 				currentCoord.getZ());
@@ -55,8 +72,8 @@ public class TextRenderer implements StandardRenderer {
 		for (int i = 0; i <= maxCoord.getY(); i++) {
 			this.outputColumn(String.valueOf(i));
 		}
-		System.out.println();
-		System.out.println();
+		this.writer.println();
+		this.writer.println();
 
 		// The rest part.
 		Tile[][] tiles = engine.getLayerTiles(currentCoord.getZ());
@@ -71,8 +88,8 @@ public class TextRenderer implements StandardRenderer {
 				}
 				this.outputColumn(str);
 			}
-			System.out.println();
-			System.out.println();
+			this.writer.println();
+			this.writer.println();
 		}
 	}
 
@@ -92,39 +109,39 @@ public class TextRenderer implements StandardRenderer {
 		int rightSpaces = spaces >> 1;
 		int leftSpaces = rightSpaces + (spaces & 1);
 		this.outputSpaces(leftSpaces);
-		System.out.print(str);
+		this.writer.print(str);
 		this.outputSpaces(rightSpaces);
 	}
 
 	public void outputSpaces(int spaces) {
 		for (int i = 0; i < spaces; i++) {
-			System.out.print(' ');
+			this.writer.print(' ');
 		}
 	}
 
 	public void outputStringObjectMap(Map<String, Object> map) {
 		for (Map.Entry<String, Object> attributeEntry : map.entrySet()) {
-			System.out.format("%s: %s;\t", attributeEntry.getKey(),
+			this.writer.format("%s: %s;\t", attributeEntry.getKey(),
 					attributeEntry.getValue());
 		}
-		System.out.println();
-		System.out.println();
+		this.writer.println();
+		this.writer.println();
 	}
 
 	@SuppressWarnings("unchecked")
 	public void renderEvent(StandardEvent event) {
 		if (event != null) {
-			System.out.println("OK.");
+			this.writer.println("OK.");
 		} else {
-			System.out.println("REJECTED.");
+			this.writer.println("REJECTED.");
 		}
-		System.out.println();
+		this.writer.println();
 		if (event != null
 				&& event.getExtraInformation().containsKey("fight-details")) {
-			System.out.println("Fight details:");
+			this.writer.println("Fight details:");
 			for (Object fightDetails : (List<Object>) event
 					.getExtraInformation().get("fight-details")) {
-				System.out.print("* ");
+				this.writer.print("* ");
 				this.outputStringObjectMap((Map<String, Object>) fightDetails);
 			}
 		}
