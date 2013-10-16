@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -107,7 +106,9 @@ public class TextRenderer implements StandardRenderer {
 			for (StandardTile tile : tileRow) {
 				Map<String, Object> renderingData = tile.getRenderingData();
 				String str = (String) renderingData.get("text");
-				JSONArray codes = (JSONArray) renderingData.get("text-codes");
+				@SuppressWarnings("unchecked")
+				List<String> codes = (List<String>) renderingData
+						.get("text-codes");
 				if ((Boolean) renderingData.get("character")) {
 					str = String.format(this.characterText, str);
 				}
@@ -126,11 +127,11 @@ public class TextRenderer implements StandardRenderer {
 		this.outputColumn(str, null);
 	}
 
-	public void outputColumn(String str, JSONArray codes) {
+	public void outputColumn(String str, List<String> codes) {
 		this.outputFixedWidth(str, this.columnWidth, codes);
 	}
 
-	public void outputFixedWidth(String str, int width, JSONArray codes) {
+	public void outputFixedWidth(String str, int width, List<String> codes) {
 		if (str.length() > width) {
 			str = str.substring(str.length() - width);
 		}
@@ -142,15 +143,11 @@ public class TextRenderer implements StandardRenderer {
 		this.outputSpaces(rightSpaces);
 	}
 
-	public void outputString(String str, JSONArray codes) {
+	public void outputString(String str, List<String> codes) {
 		boolean useCodes = (codes != null && this.isConsole);
 		if (useCodes) {
-			for (int i = 0; i < codes.length(); i++) {
-				String codeStr = null;
-				try {
-					codeStr = ansiCodes.get(codes.getString(i));
-				} catch (JSONException e) {
-				}
+			for (String code : codes) {
+				String codeStr = ansiCodes.get(code);
 				if (codeStr != null) {
 					this.writer.print("\u001b[" + codeStr);
 				}
