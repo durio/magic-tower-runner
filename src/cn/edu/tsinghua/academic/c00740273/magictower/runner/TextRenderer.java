@@ -139,11 +139,20 @@ public class TextRenderer implements StandardRenderer {
 		if (event != null
 				&& event.getExtraInformation().containsKey("fight-details")) {
 			this.writer.println("Fight details:");
-			for (Object fightDetails : (List<Object>) event
+			for (Map<String, Object> fightDetails : (List<Map<String, Object>>) event
 					.getExtraInformation().get("fight-details")) {
 				this.writer.print("* ");
-				this.outputStringObjectMap((Map<String, Object>) fightDetails);
+				this.outputStringObjectMap(fightDetails);
 			}
+		}
+		if (event != null
+				&& event.getExtraInformation().containsKey("messages")) {
+			this.writer.println("Messages:");
+			for (String message : (List<String>) event.getExtraInformation()
+					.get("messages")) {
+				this.writer.format("* %s\n", message);
+			}
+			this.writer.println();
 		}
 	}
 }
