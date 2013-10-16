@@ -2,9 +2,11 @@ package cn.edu.tsinghua.academic.c00740273.magictower.runner;
 
 import java.io.Console;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,10 +20,32 @@ import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardTile;
 
 public class TextRenderer implements StandardRenderer {
 
+	protected static Map<String, String> ansiCodes;
+
 	protected int columnWidth;
 	protected String characterText;
 	protected boolean isConsole;
 	protected PrintWriter writer;
+
+	static {
+		ansiCodes = new HashMap<String, String>();
+		ansiCodes.put("foreground-black", "30m");
+		ansiCodes.put("foreground-red", "31m");
+		ansiCodes.put("foreground-green", "32m");
+		ansiCodes.put("foreground-yellow", "33m");
+		ansiCodes.put("foreground-blue", "34m");
+		ansiCodes.put("foreground-magenta", "35m");
+		ansiCodes.put("foreground-cyan", "36m");
+		ansiCodes.put("foreground-white", "37m");
+		ansiCodes.put("background-black", "40m");
+		ansiCodes.put("background-red", "41m");
+		ansiCodes.put("background-green", "42m");
+		ansiCodes.put("background-yellow", "43m");
+		ansiCodes.put("background-blue", "44m");
+		ansiCodes.put("background-magenta", "45m");
+		ansiCodes.put("background-cyan", "46m");
+		ansiCodes.put("background-white", "47m");
+	}
 
 	public TextRenderer() {
 		Console console = System.console();
@@ -83,10 +107,11 @@ public class TextRenderer implements StandardRenderer {
 			for (StandardTile tile : tileRow) {
 				Map<String, Object> renderingData = tile.getRenderingData();
 				String str = (String) renderingData.get("text");
+				JSONArray codes = (JSONArray) renderingData.get("text-codes");
 				if ((Boolean) renderingData.get("character")) {
 					str = String.format(this.characterText, str);
 				}
-				this.outputColumn(str);
+				this.outputColumn(str, codes);
 			}
 			this.writer.println();
 			this.writer.println();
@@ -98,10 +123,14 @@ public class TextRenderer implements StandardRenderer {
 	}
 
 	public void outputColumn(String str) {
-		this.outputFixedWidth(str, this.columnWidth);
+		this.outputColumn(str, null);
 	}
 
-	public void outputFixedWidth(String str, int width) {
+	public void outputColumn(String str, JSONArray codes) {
+		this.outputFixedWidth(str, this.columnWidth, codes);
+	}
+
+	public void outputFixedWidth(String str, int width, JSONArray codes) {
 		if (str.length() > width) {
 			str = str.substring(str.length() - width);
 		}
@@ -109,8 +138,28 @@ public class TextRenderer implements StandardRenderer {
 		int rightSpaces = spaces >> 1;
 		int leftSpaces = rightSpaces + (spaces & 1);
 		this.outputSpaces(leftSpaces);
-		this.writer.print(str);
+		this.outputString(str, codes);
 		this.outputSpaces(rightSpaces);
+	}
+
+	public void outputString(String str, JSONArray codes) {
+		boolean useCodes = (codes != null && this.isConsole);
+		if (useCodes) {
+			for (int i = 0; i < codes.length(); i++) {
+				String codeStr = null;
+				try {
+					codeStr = ansiCodes.get(codes.getString(i));
+				} catch (JSONException e) {
+				}
+				if (codeStr != null) {
+					this.writer.print("\u001b[" + codeStr);
+				}
+			}
+		}
+		this.writer.print(str);
+		if (useCodes) {
+			this.writer.print("\u001b[0m");
+		}
 	}
 
 	public void outputSpaces(int spaces) {
