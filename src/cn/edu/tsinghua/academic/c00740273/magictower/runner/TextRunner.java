@@ -89,50 +89,34 @@ public class TextRunner {
 		while (true) {
 			System.out.print("> ");
 			String cmd = this.scanner.next();
-			if (cmd.equals("m")) {
+			if (cmd.matches("[msa]")) {
 				int z = this.scanner.nextInt();
 				int x = this.scanner.nextInt();
 				int y = this.scanner.nextInt();
 				Coordinate coord = new Coordinate(z, x, y);
-				return engine.moveTo(coord);
-			} else if (cmd.equals("s")) {
-				int z = this.scanner.nextInt();
-				int x = this.scanner.nextInt();
-				int y = this.scanner.nextInt();
-				Coordinate coord = new Coordinate(z, x, y);
-				return engine.simulateMoveTo(coord);
-			} else if (cmd.equals("a")) {
-				int z = this.scanner.nextInt();
-				int x = this.scanner.nextInt();
-				int y = this.scanner.nextInt();
-				Coordinate coord = new Coordinate(z, x, y);
-				return engine.attemptMoveTo(coord);
-			} else if (cmd.equals("h")) {
+				Event event = null;
+				if (cmd.equals("m")) {
+					event = engine.moveTo(coord);
+				} else if (cmd.equals("s")) {
+					event = engine.simulateMoveTo(coord);
+				} else if (cmd.equals("a")) {
+					event = engine.attemptMoveTo(coord);
+				}
+				return event;
+			} else if (cmd.matches("[hjkl]")) {
 				Coordinate currentCoord = engine.getCurrentCoordinate();
 				int z = currentCoord.getZ();
 				int x = currentCoord.getX();
-				int y = currentCoord.getY() - 1;
-				Coordinate coord = new Coordinate(z, x, y);
-				return engine.moveTo(coord);
-			} else if (cmd.equals("l")) {
-				Coordinate currentCoord = engine.getCurrentCoordinate();
-				int z = currentCoord.getZ();
-				int x = currentCoord.getX();
-				int y = currentCoord.getY() + 1;
-				Coordinate coord = new Coordinate(z, x, y);
-				return engine.moveTo(coord);
-			} else if (cmd.equals("j")) {
-				Coordinate currentCoord = engine.getCurrentCoordinate();
-				int z = currentCoord.getZ();
-				int x = currentCoord.getX() + 1;
 				int y = currentCoord.getY();
-				Coordinate coord = new Coordinate(z, x, y);
-				return engine.moveTo(coord);
-			} else if (cmd.equals("k")) {
-				Coordinate currentCoord = engine.getCurrentCoordinate();
-				int z = currentCoord.getZ();
-				int x = currentCoord.getX() - 1;
-				int y = currentCoord.getY();
+				if (cmd.equals("h")) {
+					y--;
+				} else if (cmd.equals("l")) {
+					y++;
+				} else if (cmd.equals("j")) {
+					x++;
+				} else if (cmd.equals("k")) {
+					x--;
+				}
 				Coordinate coord = new Coordinate(z, x, y);
 				return engine.moveTo(coord);
 			} else if (cmd.equals("w")) {
