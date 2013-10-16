@@ -103,22 +103,26 @@ public class TextRunner {
 					event = engine.attemptMoveTo(coord);
 				}
 				return event;
-			} else if (cmd.matches("[hjkl]")) {
-				Coordinate currentCoord = engine.getCurrentCoordinate();
-				int z = currentCoord.getZ();
-				int x = currentCoord.getX();
-				int y = currentCoord.getY();
-				if (cmd.equals("h")) {
-					y--;
-				} else if (cmd.equals("l")) {
-					y++;
-				} else if (cmd.equals("j")) {
-					x++;
-				} else if (cmd.equals("k")) {
-					x--;
+			} else if (cmd.matches("[hjkl]+")) {
+				Event event = null;
+				for (int i = 0; i < cmd.length(); i++) {
+					Coordinate currentCoord = engine.getCurrentCoordinate();
+					int z = currentCoord.getZ();
+					int x = currentCoord.getX();
+					int y = currentCoord.getY();
+					if (cmd.charAt(i) == 'h') {
+						y--;
+					} else if (cmd.charAt(i) == 'l') {
+						y++;
+					} else if (cmd.charAt(i) == 'j') {
+						x++;
+					} else if (cmd.charAt(i) == 'k') {
+						x--;
+					}
+					Coordinate coord = new Coordinate(z, x, y);
+					event = engine.moveTo(coord);
 				}
-				Coordinate coord = new Coordinate(z, x, y);
-				return engine.moveTo(coord);
+				return event;
 			} else if (cmd.equals("w")) {
 				String storageKey = this.scanner.next();
 				byte[] data = engine.serializeGame();
