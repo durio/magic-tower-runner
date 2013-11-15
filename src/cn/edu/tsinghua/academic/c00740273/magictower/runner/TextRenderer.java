@@ -16,6 +16,7 @@ import cn.edu.tsinghua.academic.c00740273.magictower.standard.DataFormatExceptio
 import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardEvent;
 import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardRenderer;
 import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardTile;
+import cn.edu.tsinghua.academic.c00740273.magictower.standard.mixin.Fight;
 
 public class TextRenderer implements StandardRenderer {
 
@@ -189,6 +190,30 @@ public class TextRenderer implements StandardRenderer {
 					.getExtraInformation().get("fight-details")) {
 				this.writer.print("* ");
 				this.outputStringObjectMap(fightDetails);
+			}
+		}
+		if (event != null
+				&& event.getExtraInformation().containsKey("fight-logs")) {
+			this.writer.println("Fight logs:");
+			for (List<Fight.Attributes> fightLogs : (List<List<Fight.Attributes>>) event
+					.getExtraInformation().get("fight-logs")) {
+				if (fightLogs == null) {
+					this.writer.println("* quick-death");
+					continue;
+				}
+				this.writer.println("* {{");
+				this.writer.println("oA\toD\toH\tsA\tsD\tsH");
+				for (Fight.Attributes logEntry : fightLogs) {
+					this.writer
+							.format("%d\t%d\t%d\t%d\t%d\t%d\n",
+									logEntry.getOpponentAttack(),
+									logEntry.getOpponentDefense(),
+									logEntry.getOpponentHealth(),
+									logEntry.getSelfAttack(),
+									logEntry.getSelfDefense(),
+									logEntry.getSelfHealth());
+				}
+				this.writer.println("}}");
 			}
 		}
 		if (event != null
