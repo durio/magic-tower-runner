@@ -15,11 +15,11 @@ import cn.edu.tsinghua.academic.c00740273.magictower.engine.Coordinate;
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.DataException;
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.Engine;
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.Event;
-import cn.edu.tsinghua.academic.c00740273.magictower.engine.GameFailureTerminationException;
-import cn.edu.tsinghua.academic.c00740273.magictower.engine.GameSuccessTerminationException;
 import cn.edu.tsinghua.academic.c00740273.magictower.engine.GameTerminationException;
 import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardEvent;
 import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardGame;
+import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardGameFailureTerminationException;
+import cn.edu.tsinghua.academic.c00740273.magictower.standard.StandardGameSuccessTerminationException;
 
 public class TextRunner {
 
@@ -67,12 +67,15 @@ public class TextRunner {
 			renderer.renderRoundEvent(engine, event);
 			try {
 				event = (StandardEvent) this.runCommand(engine, renderer);
-			} catch (GameSuccessTerminationException e) {
-				System.out.print("Success! " + e.getMessage() + " / ");
+			} catch (StandardGameSuccessTerminationException e) {
+				System.out.print("Success! " + e.getMessage()
+						+ " / AttrCheck: "
+						+ e.getAttributeCheck().getAttributeName() + " / ");
 				renderer.renderEvent((StandardEvent) e.getEvent());
 				return;
-			} catch (GameFailureTerminationException e) {
-				System.out.print("Failed. " + e.getMessage() + " / ");
+			} catch (StandardGameFailureTerminationException e) {
+				System.out.print("Failed. " + e.getMessage() + " / AttrCheck: "
+						+ e.getAttributeCheck().getAttributeName() + " / ");
 				renderer.renderEvent((StandardEvent) e.getEvent());
 				return;
 			} catch (GameTerminationException e) {
